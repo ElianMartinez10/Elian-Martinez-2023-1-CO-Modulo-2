@@ -19,7 +19,7 @@ class Dinosaur(Sprite):
         self.dino_jump = False
         self.dino_duck = False
         self.jump_speed = self.JUMP_SPEED
-
+        
     def update(self, user_input): # Actualizacion y llamado de metodos
         if self.dino_run:
             self.run()
@@ -69,6 +69,9 @@ class Dinosaur(Sprite):
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS + 40 # Se Agrega +40 de posicion para que no se distorsione el juego
         self.step_index += 1
+
+    def sound(self):
+        pass
 
     def draw(self, screen):
         screen.blit(self.image, (self.dino_rect.x, self.dino_rect.y))

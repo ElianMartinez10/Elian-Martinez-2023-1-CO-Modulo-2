@@ -18,6 +18,8 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
+        pygame.mixer.music.play(-1)
         
     def run(self):
         # Game loop: events - update - draw
