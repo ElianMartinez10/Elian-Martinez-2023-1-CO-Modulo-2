@@ -24,6 +24,7 @@ class Game:
         pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
         pygame.mixer.music.play(-1)
         self.score = 0
+        self.high_score = 0
         self.death_count = 0
 
     def execute(self):
@@ -84,8 +85,22 @@ class Game:
         if self.death_count == 0:
             self.menu.draw(self.screen)
         else:
-            self.menu.update_message('new message')
+            self.menu.update_message('GAME OVER. Press any key to restart...')
             self.menu.draw(self.screen)
+
+            font = pygame.font.Font(FONT_STYLE, 30)
+            score_text = font.render(f'Score: {self.score}', True, (0, 0, 0))
+            high_score_text = font.render(f'High Score: {self.high_score}', True, (0, 0, 0))
+            death_count_text = font.render(f'Death Count: {self.death_count}', True, (0, 0, 0))
+
+            score_rect = score_text.get_rect(bottomleft=(half_screen_width - 100, half_screen_heigth + 50))
+            high_score_rect = high_score_text.get_rect(bottomleft=(half_screen_width - 100, score_rect.bottom + 50))
+            death_count_rect = death_count_text.get_rect(bottomleft=(half_screen_width - 100, high_score_rect.bottom + 50))
+
+            self.screen.blit(score_text, score_rect)
+            self.screen.blit(high_score_text, high_score_rect)
+            self.screen.blit(death_count_text, death_count_rect)
+        
 
         self.screen.blit(ICON, (half_screen_width - 50, half_screen_heigth - 140))
 
@@ -93,6 +108,9 @@ class Game:
 
     def update_score(self):
         self.score += 1
+
+        if self.score > self.high_score:
+            self.high_score = self.score
 
         if self.score % 100 == 0 and self.game_speed < 500:
             self.game_speed += 5
