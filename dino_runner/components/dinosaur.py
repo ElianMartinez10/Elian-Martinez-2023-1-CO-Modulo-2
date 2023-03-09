@@ -1,11 +1,11 @@
 import pygame
 from pygame.sprite import Sprite
 
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, RUNNING_SHIELD, JUMPING_SHIELD, DUCKING_SHIELD, DEFAULT_TYPE, SHIELD_TYPE
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, RUNNING_SHIELD, JUMPING_SHIELD, DUCKING_SHIELD, DEFAULT_TYPE, SHIELD_TYPE, HAMMER_TYPE, RUNNING_HAMMER, JUMPING_HAMMER,DUCKING_HAMMER
 
-RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD}
-JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD}
-DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD}
+RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER}
+JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER}
+DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER}
 
 
 class Dinosaur(Sprite):
@@ -26,6 +26,7 @@ class Dinosaur(Sprite):
         self.jump_speed = self.JUMP_SPEED
         self.has_power_up = False
         self.power_time_up = 0
+        self.power_hammer = False
         
     def update(self, user_input): # Actualizacion y llamado de metodos
         if self.dino_run:
@@ -35,6 +36,8 @@ class Dinosaur(Sprite):
         elif self.dino_duck:
             self.duck()
             
+        
+
         if user_input[pygame.K_DOWN] and not self.dino_jump: # Presionar abajo para agacharse, sino esta saltando
             self.dino_run = False
             self.dino_jump = False
@@ -90,3 +93,4 @@ class Dinosaur(Sprite):
         self.dino_run = True
         self.dino_jump = False
         self.dino_duck = False
+        self.power_hammer = False

@@ -1,10 +1,12 @@
 import pygame
+import random
 
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.menu import Menu
 from dino_runner.components.power_up.power_up_manager import PowerUpManager
+from dino_runner.components.power_up.hammer_manager import HammerManager
 
 class Game:
     GAME_SPEED = 20
@@ -21,7 +23,17 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
-        self.power_up_manager = PowerUpManager()
+
+        num = random.randint(1,2)
+        if num == 1:
+            power_up = PowerUpManager()
+            print("entro a shield")
+        else:
+            power_up = HammerManager()
+            print("entro a martillo")
+
+        self.power_up_manager = PowerUpManager()   
+        self.hammer_manager = HammerManager()         
         self.menu = Menu(self.screen)
         self.running = False
         # pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
@@ -61,6 +73,7 @@ class Game:
         self.player.update(user_input)
         self.obstacle_manager.update(self)
         self.power_up_manager.update(self)
+        self.hammer_manager.update(self)
         self.update_score()
 
     def draw(self):
@@ -70,6 +83,7 @@ class Game:
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.power_up_manager.draw(self.screen)
+        self.hammer_manager.draw(self.screen)
         self.draw_power_up_time()
         self.draw_score()
         pygame.display.update()
@@ -124,8 +138,8 @@ class Game:
         if self.score > self.high_score:
             self.high_score = self.score
 
-        if self.score % 100 == 0 and self.game_speed < 500:
-            self.game_speed += 5
+        # if self.score % 100 == 0 and self.game_speed < 500:
+        #     self.game_speed += 5
 
     def draw_score(self):
         font = pygame.font.Font(FONT_STYLE, 30)
