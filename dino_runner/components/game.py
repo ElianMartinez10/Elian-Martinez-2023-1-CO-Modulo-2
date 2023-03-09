@@ -1,9 +1,10 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.menu import Menu
+from dino_runner.components.power_up.power_up_manager import PowerUpManager
 
 class Game:
     GAME_SPEED = 20
@@ -19,6 +20,7 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.menu = Menu('Press any key to start...', self.screen)
         self.running = False
         pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
@@ -26,6 +28,7 @@ class Game:
         self.score = 0
         self.high_score = 0
         self.death_count = 0
+        
 
     def execute(self):
         self.running = True
@@ -56,6 +59,7 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
+        self.power_up_manager.update(self)
         self.update_score()
 
     def draw(self):
@@ -64,6 +68,8 @@ class Game:
         self.draw_background()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.power_up_manager.draw(self.screen)
+        self.draw_power_up_time()
         self.draw_score()
         pygame.display.update()
         #pygame.display.flip()
@@ -121,3 +127,18 @@ class Game:
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
+
+    def reset_game(self):
+        self.obstacle_manager.reset_obstacles()
+        self.game_speed = self.GAME_SPEED
+        self.player.reset()
+
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000, 2)
+
+            if time_to_show >= 0:
+                self.menu.draw(self.screen, f'{self.player.type.capitalize()} enabled for {time_to_show} seconds', (500,50))
+            else:
+                self.has_power_up = False
+                self.player.type = DEFAULT_TYPE
