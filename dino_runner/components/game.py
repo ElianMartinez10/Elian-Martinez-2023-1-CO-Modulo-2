@@ -10,6 +10,7 @@ class Game:
     GAME_SPEED = 20
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -21,10 +22,10 @@ class Game:
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
-        self.menu = Menu('Press any key to start...', self.screen)
+        self.menu = Menu(self.screen)
         self.running = False
-        pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.load('dino_runner/assets/Sound/Song.wav')
+        # pygame.mixer.music.play(-1)
         self.score = 0
         self.high_score = 0
         self.death_count = 0
@@ -83,16 +84,22 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
 
+    def sound(self):
+        if not self.dino_duck:
+            sound = pygame.mixer.Sound('assets/Sound/Jump.wav')
+            sound.play()
+            self.dino_jump = True    
+
     def show_menu(self):
         self.menu.reset_screen_color(self.screen)
         half_screen_width = SCREEN_WIDTH // 2
         half_screen_heigth = SCREEN_HEIGHT // 2
 
         if self.death_count == 0:
-            self.menu.draw(self.screen)
+            self.menu.draw(self.screen, 'Press any key to start...')
         else:
-            self.menu.update_message('GAME OVER. Press any key to restart...')
-            self.menu.draw(self.screen)
+            self.menu.draw(self.screen, 'GAME OVER. Press any key to restart...')
+            #self.menu.draw(self.screen)
 
             font = pygame.font.Font(FONT_STYLE, 30)
             score_text = font.render(f'Score: {self.score}', True, (0, 0, 0))
@@ -107,7 +114,6 @@ class Game:
             self.screen.blit(high_score_text, high_score_rect)
             self.screen.blit(death_count_text, death_count_rect)
         
-
         self.screen.blit(ICON, (half_screen_width - 50, half_screen_heigth - 140))
 
         self.menu.update(self)
@@ -138,7 +144,7 @@ class Game:
             time_to_show = round((self.player.power_time_up - pygame.time.get_ticks()) / 1000, 2)
 
             if time_to_show >= 0:
-                self.menu.draw(self.screen, f'{self.player.type.capitalize()} enabled for {time_to_show} seconds', (500,50))
+                self.menu.draw(self.screen, f'{self.player.type.capitalize()} enabled for {time_to_show} seconds', 500,50)
             else:
                 self.has_power_up = False
                 self.player.type = DEFAULT_TYPE
